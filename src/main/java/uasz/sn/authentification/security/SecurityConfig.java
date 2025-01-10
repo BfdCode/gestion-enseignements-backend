@@ -55,47 +55,51 @@ public class SecurityConfig {
     SecurityFilterChain configureSecurity(HttpSecurity http) throws Exception {
     	// Add this row
 
-    	// http.csrf().disable().cors().and()
-    	// .authorizeHttpRequests().anyRequest().permitAll();
+    	http.csrf().disable().cors().and()
+    	.authorizeHttpRequests().anyRequest().permitAll();
     	
     	
-		http.csrf().disable()
-			.cors().and()
-			.sessionManagement()
-			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			.and()
-			.authorizeHttpRequests().requestMatchers(HttpMethod.POST, "/login").permitAll()
-			.anyRequest().authenticated()   
-			.and()
-			.exceptionHandling().authenticationEntryPoint(exceptionHandler)
-			.and()
-			.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
-			.httpBasic(withDefaults());
+		// http.csrf().disable()
+		// 	.cors().and()
+		// 	.sessionManagement()
+		// 	.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+		// 	.and()
+		// 	.authorizeHttpRequests().requestMatchers(HttpMethod.POST, "/login").permitAll()
+		// 	.requestMatchers(HttpMethod.POST, "/api/**").permitAll()
+		// 	.requestMatchers("/api/**").permitAll()
+		// 	.requestMatchers("/apiDTO/**").permitAll()
+		// 	.anyRequest().authenticated()   
+		// 	.and()
+		// 	.exceptionHandling().authenticationEntryPoint(exceptionHandler)
+		// 	.and()
+		// 	.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+		// 	.httpBasic(withDefaults());
 		
-    	
 	    return http.build();
     }
 
-    @Bean
-	CorsConfigurationSource corsConfigurationSource() {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(Arrays.asList("*"));
-		config.setAllowedMethods(Arrays.asList("*"));
-		config.setAllowedHeaders(Arrays.asList("*"));
-		config.setAllowCredentials(false);
-		config.applyPermitDefaultValues();
-
-		source.registerCorsConfiguration("/**", config);
-		return source;
-	}
-
-
-
-
-
-
     // @Bean
+	// CorsConfigurationSource corsConfigurationSource() {
+	// 	UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	// 	CorsConfiguration config = new CorsConfiguration();
+	// 	config.setAllowedOrigins(Arrays.asList("*"));
+	// 	config.setAllowedMethods(Arrays.asList("*"));
+	// 	config.setAllowedHeaders(Arrays.asList("*"));
+	// 	config.setAllowCredentials(false);
+	// 	config.applyPermitDefaultValues();
+
+	// 	source.registerCorsConfiguration("/**", config);
+	// 	return source;
+	// }
+}
+
+
+
+
+
+
+
+// @Bean
     // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     //     http
     //         .authorizeHttpRequests(
@@ -119,4 +123,3 @@ public class SecurityConfig {
 
     //     return http.build();
     // }
-}
