@@ -1,8 +1,8 @@
 package uasz.sn.utilisateur.services;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,21 +36,20 @@ public class VacataireService {
         return vacataireRepository.save(vacataire);
     }
 
-    public ResponseEntity<Vacataire> modifier(Long id, Vacataire vacataire){
-        int indexVacataire = -1;
-        List<Vacataire> vacataires = vacataireRepository.findAll();
+    public ResponseEntity<Vacataire> modifier(Long id, Vacataire vacataire) {
 
-        for (Vacataire v : vacataires) {
-            if (v.getId().equals(id)) {
-                indexVacataire = vacataires.indexOf(v);
-                vacataires.set(indexVacataire, vacataire);
-            }
+        Optional<Vacataire> optionalVacataire = vacataireRepository.findById(id);
+    
+        if (optionalVacataire.isPresent()) {
+            Vacataire existingVacataire = optionalVacataire.get();
+            BeanUtils.copyProperties(vacataire, existingVacataire, "id");
+            Vacataire updatedVacataire = vacataireRepository.save(existingVacataire);
+            return new ResponseEntity<>(updatedVacataire, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(ajouter(vacataire), HttpStatus.CREATED);
         }
-        
-        return (indexVacataire == -1) ? 
-            new ResponseEntity<>(ajouter(vacataire), HttpStatus.CREATED) :
-            new ResponseEntity<>(ajouter(vacataire), HttpStatus.OK) ;
     }
+
 
     public void supprimer(Long id) {
         vacataireRepository.deleteById(id);

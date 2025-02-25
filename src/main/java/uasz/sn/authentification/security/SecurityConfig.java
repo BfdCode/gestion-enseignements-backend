@@ -15,7 +15,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -78,19 +77,19 @@ public class SecurityConfig {
 	    return http.build();
     }
 
-    // @Bean
-	// CorsConfigurationSource corsConfigurationSource() {
-	// 	UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-	// 	CorsConfiguration config = new CorsConfiguration();
-	// 	config.setAllowedOrigins(Arrays.asList("*"));
-	// 	config.setAllowedMethods(Arrays.asList("*"));
-	// 	config.setAllowedHeaders(Arrays.asList("*"));
-	// 	config.setAllowCredentials(false);
-	// 	config.applyPermitDefaultValues();
+    @Bean
+	CorsConfigurationSource corsConfigurationSource() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowedOrigins(Arrays.asList("*"));
+		config.setAllowedMethods(Arrays.asList("*"));
+		config.setAllowedHeaders(Arrays.asList("*"));
+		config.setAllowCredentials(false);
+		config.applyPermitDefaultValues();
 
-	// 	source.registerCorsConfiguration("/**", config);
-	// 	return source;
-	// }
+		source.registerCorsConfiguration("/**", config);
+		return source;
+	}
 }
 
 

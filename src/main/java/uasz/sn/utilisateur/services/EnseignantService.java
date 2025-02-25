@@ -1,8 +1,8 @@
 package uasz.sn.utilisateur.services;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class EnseignantService {
         return enseignantRepository.findAll();
     }
 
-    public Optional<Enseignant> rechercher(Long id){
+    public Optional<Enseignant> rEnseignanthercher(Long id){
         for (Enseignant enseignant : enseignantRepository.findAll()) {
             if (enseignant.getId().equals(id)) {
                 return Optional.of(enseignant);
@@ -36,20 +36,18 @@ public class EnseignantService {
         return enseignantRepository.save(enseignant);
     }
 
-    public ResponseEntity<Enseignant> modifier(Long id, Enseignant enseignant){
-        int indexEnseignant = -1;
-        List<Enseignant> enseignants = enseignantRepository.findAll();
+    public ResponseEntity<Enseignant> modifier(Long id, Enseignant enseignant) {
 
-        for (Enseignant e : enseignants) {
-            if (e.getId().equals(id)) {
-                indexEnseignant = enseignants.indexOf(e);
-                enseignants.set(indexEnseignant, enseignant);
-            }
+        Optional<Enseignant> optionalEnseignant = enseignantRepository.findById(id);
+    
+        if (optionalEnseignant.isPresent()) {
+            Enseignant existingEnseignant = optionalEnseignant.get();
+            BeanUtils.copyProperties(enseignant, existingEnseignant, "id");
+            Enseignant updatedEnseignant = enseignantRepository.save(existingEnseignant);
+            return new ResponseEntity<>(updatedEnseignant, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(ajouter(enseignant), HttpStatus.CREATED);
         }
-        
-        return (indexEnseignant == -1) ? 
-            new ResponseEntity<>(ajouter(enseignant), HttpStatus.CREATED) :
-            new ResponseEntity<>(ajouter(enseignant), HttpStatus.OK) ;
     }
 
     public void supprimer(Long id) {

@@ -1,8 +1,8 @@
 package uasz.sn.utilisateur.services;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,20 +37,18 @@ public class EtudiantService {
         return etudiantRepository.save(etudiant);
     }
 
-    public ResponseEntity<Etudiant> modifier(Long id, Etudiant etudiant){
-        int indexEtudiant = -1;
-        List<Etudiant> etudiants = etudiantRepository.findAll();
+    public ResponseEntity<Etudiant> modifier(Long id, Etudiant etudiant) {
 
-        for (Etudiant e : etudiants) {
-            if (e.getId().equals(id)) {
-                indexEtudiant = etudiants.indexOf(e);
-                etudiants.set(indexEtudiant, etudiant);
-            }
+        Optional<Etudiant> optionalEtudiant = etudiantRepository.findById(id);
+    
+        if (optionalEtudiant.isPresent()) {
+            Etudiant existingEtudiant = optionalEtudiant.get();
+            BeanUtils.copyProperties(etudiant, existingEtudiant, "id");
+            Etudiant updatedEtudiant = etudiantRepository.save(existingEtudiant);
+            return new ResponseEntity<>(updatedEtudiant, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(ajouter(etudiant), HttpStatus.CREATED);
         }
-        
-        return (indexEtudiant == -1) ? 
-            new ResponseEntity<>(ajouter(etudiant), HttpStatus.CREATED) :
-            new ResponseEntity<>(ajouter(etudiant), HttpStatus.OK) ;
     }
 
     public void supprimer(Long id) {

@@ -1,8 +1,8 @@
 package uasz.sn.utilisateur.services;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,20 +36,18 @@ public class PermanentService {
         return permanentRepository.save(permanent);
     }
 
-    public ResponseEntity<Permanent> modifier(Long id, Permanent permanent){
-        int indexPermanent = -1;
-        List<Permanent> permanents = permanentRepository.findAll();
+    public ResponseEntity<Permanent> modifier(Long id, Permanent permanent) {
 
-        for (Permanent p : permanents) {
-            if (p.getId().equals(id)) {
-                indexPermanent = permanents.indexOf(p);
-                permanents.set(indexPermanent, permanent);
-            }
+        Optional<Permanent> optionalPermanent = permanentRepository.findById(id);
+    
+        if (optionalPermanent.isPresent()) {
+            Permanent existingPermanent = optionalPermanent.get();
+            BeanUtils.copyProperties(permanent, existingPermanent, "id");
+            Permanent updatedPermanent = permanentRepository.save(existingPermanent);
+            return new ResponseEntity<>(updatedPermanent, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(ajouter(permanent), HttpStatus.CREATED);
         }
-        
-        return (indexPermanent == -1) ? 
-            new ResponseEntity<>(ajouter(permanent), HttpStatus.CREATED) :
-            new ResponseEntity<>(ajouter(permanent), HttpStatus.OK) ;
     }
 
     public void supprimer(Long id) {

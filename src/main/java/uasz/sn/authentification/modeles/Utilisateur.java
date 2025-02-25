@@ -1,6 +1,6 @@
 package uasz.sn.authentification.modeles;
 
-import java.util.Collection;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Utilisateur {
+public abstract class Utilisateur implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,6 +41,7 @@ public abstract class Utilisateur {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreation;
+
     private boolean active;
 
     @ManyToMany(fetch = FetchType.EAGER)
